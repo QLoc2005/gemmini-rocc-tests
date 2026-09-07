@@ -12,7 +12,11 @@
 #include <limits.h>
 #include <stdbool.h>
 
-#include "include/gemmini_params.h"
+#ifndef GEMMINI_PARAMS_HEADER
+#define GEMMINI_PARAMS_HEADER "include/gemmini_params.h"
+#endif
+#include GEMMINI_PARAMS_HEADER
+#include "include/pfu_abi.h"
 
 #define GEMMINI_ASSERTIONS
 
@@ -60,6 +64,8 @@
 #define k_MVOUT_SPAD 23
 #define k_LOOP_WS_CONFIG_SPAD_AB 24
 #define k_LOOP_WS_CONFIG_SPAD_C 25
+#define k_PFU_LOAD PFU_LOAD_FUNCT7
+#define k_PFU_CONFIG PFU_CONFIG_FUNCT7
 
 #define CONFIG_EX 0
 #define CONFIG_LD 1
@@ -300,6 +306,13 @@ static acc_scale_t_bits acc_scale_t_to_acc_scale_t_bits(acc_scale_t x) {
 
 #define gemmini_config_norm(q_const, q_const_type, set_stats_id_only, act_msb, stat_id, igelu_qb, igelu_qc) \
     ROCC_INSTRUCTION_RS1_RS2(XCUSTOM_ACC, (((uint64_t) ((uint32_t) q_const)) << 32) | ((q_const_type & 1) << 18) | ((set_stats_id_only & 1) << 17) | ((act_msb & 1) << 16) | ((uint64_t)stat_id << 8) | CONFIG_BERT, ((uint64_t)((uint32_t)(igelu_qc)) << 32) | ((uint64_t)((uint32_t)(igelu_qb))), k_CONFIG)
+
+/* PFU V1 commands are separate custom funct7 operations. */
+#define gemmini_pfu_load(src_addr, bank, n, image_size_bytes) \
+    ROCC_INSTRUCTION_RS1_RS2(XCUSTOM_ACC, (src_addr), \
+      PFU_LOAD_RS2((bank), 0, (n), (image_size_bytes)), k_PFU_LOAD)
+#define gemmini_pfu_config(bank, enable) \
+    ROCC_INSTRUCTION_RS1_RS2(XCUSTOM_ACC, PFU_CONFIG_RS1((bank), (enable)), 0, k_PFU_CONFIG)
 
 // flush
 #define gemmini_flush(skip) \
@@ -3614,4 +3627,3 @@ _STATIC void tiled_norm_auto(const size_t I, const size_t J,
 #undef abs
 
 #endif // SRC_MAIN_C_GEMMINI_H
-
