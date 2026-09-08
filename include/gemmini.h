@@ -1417,8 +1417,12 @@ static void sp_tiled_conv(
   // When dw convs are true, we assume that kchs and ochs are 1
   if (dw) { kchs = 1; pochs = 1; }
 
-  const int orows = porows * pool_stride + pool_size - 1 - pupad - pdpad;
-  const int ocols = pocols * pool_stride + pool_size - 1 - plpad - prpad;
+  /* A zero pool stride is the no-pool encoding.  The convolution bounds still
+   * use the identity pooling transform (stride one); otherwise orows/ocols
+   * become zero and LOOP_CONV_WS never retires. */
+  const int effective_pool_stride = pool_stride == 0 ? 1 : pool_stride;
+  const int orows = porows * effective_pool_stride + pool_size - 1 - pupad - pdpad;
+  const int ocols = pocols * effective_pool_stride + pool_size - 1 - plpad - prpad;
   const int ochs = pochs;
 
   // Calculate image dimensions
