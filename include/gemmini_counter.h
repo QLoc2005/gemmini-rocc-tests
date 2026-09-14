@@ -5,7 +5,7 @@
 
 #define DISABLE 0
 
-#define INCREMENTAL_COUNTERS 52
+#define INCREMENTAL_COUNTERS 44
 
 // All existing Gemmini performance counters
 
@@ -65,13 +65,6 @@
 
 #define LOOP_MATMUL_ACTIVE_CYCLES 43
 #define TRANSPOSE_PRELOAD_UNROLLER_ACTIVE_CYCLES 44
-#define PFU_ACTIVE_CYCLES 45
-#define PFU_INPUT_STALL_CYCLES 46
-#define PFU_OUTPUT_STALL_CYCLES 47
-#define PFU_TABLE_PATH_CYCLES 49
-#define PFU_ERROR_PULSE 52
-
-/* PFU event IDs 48, 50, and 51 are reserved tombstones. */
 
 #define RESERVATION_STATION_LD_COUNT (INCREMENTAL_COUNTERS + 1)
 #define RESERVATION_STATION_ST_COUNT (INCREMENTAL_COUNTERS + 2)
@@ -82,14 +75,5 @@
 
 #define RDMA_TOTAL_LATENCY (INCREMENTAL_COUNTERS + 6)
 #define WDMA_TOTAL_LATENCY (INCREMENTAL_COUNTERS + 7)
-
-#define PFU_STATUS (INCREMENTAL_COUNTERS + 8)
-#define PFU_PROCESSED_ELEMENTS (INCREMENTAL_COUNTERS + 9)
-#define PFU_RANGE_CLAMPS (INCREMENTAL_COUNTERS + 10)
-#define PFU_TABLE_WRITES (INCREMENTAL_COUNTERS + 14)
-#define PFU_CONFIG_ERRORS (INCREMENTAL_COUNTERS + 15)
-
-/* External slots 11..13 are reserved tombstones.  Former slot 16 was
- * intentionally removed; CounterExternal.n is 16 and no macro is exported. */
 
 #endif
