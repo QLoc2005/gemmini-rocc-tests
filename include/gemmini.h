@@ -2359,6 +2359,12 @@ static void tiled_conv(
       b_reuse = true;
     if(num_kch * num_krow * num_kcol * num_b * num_porow * num_pocol <= 2)
       a_reuse = true;
+#ifdef GEMMINI_NO_CONV_SPAD_REUSE
+    /* Diagnostic: reload A and B for every tile instead of reusing them from
+     * the scratchpad through a/b_spad_id.  Off by default. */
+    a_reuse = false;
+    b_reuse = false;
+#endif
 
     for (int b = 0; b < batch_size; b += batches) {
         for (int porow = porow_start; porow < porow_end; porow += porows) {
